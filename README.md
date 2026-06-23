@@ -120,5 +120,5 @@ La validazione dell'architettura distribuita è stata condotta su tre livelli di
 
 * **Scalabilità Selettiva**: In contesti di elevato traffico ospedaliero, l'amministratore dell'infrastruttura può scalare orizzontalmente il solo container di classificazione tramite il comando `docker compose up --scale classification-service=3`, ottimizzando l'hardware a disposizione in base ai reali colli di bottiglia del sistema.
 
-## Warning For External Users
+## External Usage Disclaimer
 This tool was developed for educational purposes, as a project for the university course of software evolution. The diagnoses generated are not clinically accurate for all inputs.
