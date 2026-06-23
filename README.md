@@ -45,20 +45,20 @@ Il sistema è stato scomposto in 4 micro servizi e 1 reverse proxy, isolando i c
 ## 2. Diagramma Architetturale
 
 ```mermaid
-graph Td
-    Client[Browser Utente / Medico] -->|Porta 80| Ngix[nginx-gateway]
+graph TD
+    Client[Browser Utente / Medico] -->|Porta 80| Nginx[nginx-gateway]
 
-    subgraph Docker Private Network (Rete isolata)
+    subgraph net ["Docker Private Network (Rete isolata)"]
         Nginx -->|/ | GS[gui-service: Gradio UI]
         Nginx -->|/api/classification/| CS[classification-service: FastAPI + ResNet-18]
         Nginx -->|/api/explainability/| ES[explainability-service: FastAPI + Grad-CAM]
-        Nginx -->|/api/history| HS[history-service: FastAPI]
+        Nginx -->|/api/history/| HS[history-service: FastAPI]
 
         GS -->|Richieste HTTP| CS
         GS -->|Richieste HTTP| ES
         GS -->|Richieste HTTP| HS
 
-        HS <-->|Scrittura/Lettura JSON| Vol[(Docker Volume: diagnoses)]
+        HS -->|Scrittura/Lettura JSON| Vol[(Docker Volume: diagnoses)]
     end
 ```
 
