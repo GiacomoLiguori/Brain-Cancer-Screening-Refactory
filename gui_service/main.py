@@ -31,6 +31,9 @@ def diagnose(slice : Image):
     image_bytes = io.BytesIO()
     slice.save(image_bytes, format = 'PNG')
 
+    predictions = None
+    grad_cam = None
+
     try:
         image_bytes.seek(0)      
         files = { 'file': ('image.png', image_bytes, 'image/png') }
@@ -48,8 +51,12 @@ def diagnose(slice : Image):
             requests.post(HISTORY_SERVICE_URL, json = diagnosis_log)
 
         except Exception as e:
-            print(f"Unable to save diagnosis log: {e}")
+            print(f"History Service unavailable | Exception caught: {e}")
 
+    except Exception as e:
+        print(f"Classification Service unavailable | Exception caught: {e}")
+
+    try:
         image_bytes.seek(0)      
         files = { 'file': ('image.png', image_bytes, 'image/png') }
 
@@ -57,14 +64,12 @@ def diagnose(slice : Image):
         response.raise_for_status()
 
         grad_cam = Image.open(io.BytesIO(response.content)) 
-
-        return predictions, grad_cam    
-
-    except requests.exceptions.RequestException as e:
-        msg = {"Connection error": 1.0}
         
-        return msg, None
-    
+    except Exception as e:
+        print(f"Explainability Service unavailable | Exception caught: {e}")
+
+    return predictions, grad_cam    
+
 with gr.Blocks() as app:
     with gr.Column():
         gr.Markdown(
